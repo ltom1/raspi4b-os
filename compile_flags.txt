@@ -1,0 +1,9 @@
+-Wall 
+-O2 
+-ffreestanding 
+-nostdinc 
+-nostdlib 
+-nostartfiles 
+-Iinclude 
+-DDEBUG 
+-g
