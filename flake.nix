@@ -21,8 +21,7 @@
       };
       
       installPhase = ''
-        mkdir -p $out/bin
-        cp $src/bin/* $out/bin/
+        cp -r $src* $out
       '';
          
     };
@@ -40,11 +39,12 @@
         ];
 
         shellHook = ''
-          export CC="${aarch64-elf-toolchain.src}/bin/aarch64-elf-gcc"
-          export AS="${aarch64-elf-toolchain.src}/bin/aarch64-elf-as"
-          export LD="${aarch64-elf-toolchain.src}/bin/aarch64-elf-ld"
-          export OBJCOPY="${aarch64-elf-toolchain.src}/bin/aarch64-elf-objcopy"
+          export CC="${aarch64-elf-toolchain}/bin/aarch64-elf-gcc"
+          export AS="${aarch64-elf-toolchain}/bin/aarch64-elf-as"
+          export LD="${aarch64-elf-toolchain}/bin/aarch64-elf-ld"
+          export OBJCOPY="${aarch64-elf-toolchain}/bin/aarch64-elf-objcopy"
           export DBG="${pkgs.gdb}/bin/gdb"
+          export CFLAGS="$CFLAGS -I${aarch64-elf-toolchain}/lib/gcc/aarch64-elf/13.0.0/include"
         '';
       };
 

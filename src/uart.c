@@ -17,10 +17,10 @@ void uart1_init(void) {
     *AUX_MU_MCR = 0;
     // no transmit/receive interrupts
     *AUX_MU_IER = 0;
-    // clear and disable FIFO
-    *AUX_MU_IIR = 0xc6;
+    // clear FIFO
+    *AUX_MU_IIR = 0x6;
     // baudrate 
-    *AUX_MU_BAUD = 270;
+    *AUX_MU_BAUD = 541;
 
     // enable gpio pins 14 and 15
     // alternate function 5 (transmit/receive uart1)

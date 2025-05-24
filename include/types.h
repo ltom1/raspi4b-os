@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef _TYPES_H
+#define _TYPES_H
 
 typedef volatile unsigned    char        u8;
 typedef volatile signed      char        s8;
@@ -35,3 +35,5 @@ typedef volatile signed      long long   s64;
 
 #define MIN(a, b)   ((a) < (b) ? (a) : (b))
 #define MAX(a, b)   ((a) > (b) ? (a) : (b))
+
+#endif
