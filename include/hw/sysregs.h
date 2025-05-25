@@ -1,5 +1,4 @@
-#ifndef _MMU_H
-#define _MMU_H
+#pragma once
 
 #include <types.h>
 
@@ -39,13 +38,3 @@ typedef struct PACKED TCR {
 // -------------
 // Device-nGnRE memory
 #define MAIR_DEV            0x04
-
-
-void mmu_enable(void);
-void mmu_disable(void);
-
-void mmu_change_pt(u64 ttbr0_paddr, u64 ttbr1_paddr);
-void mmu_mair_init(void);
-void mmu_tcr_init(void);
-
-#endif

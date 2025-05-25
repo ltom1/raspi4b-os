@@ -1,5 +1,6 @@
 #include <types.h>
 #include <mbox.h>
+#include <hw/mbox.h>
 #include <dbg.h>
 #include <std.h>
 
@@ -11,7 +12,7 @@ u64 prop_get_serial(void) {
     mbox[0] = 8 * 4;    // mbox size
     mbox[1] = MBOX_REQUEST;
 
-    mbox[2] = MBOX_TAG_GET_SERIAL;
+    mbox[2] = GET_SERIAL;
     mbox[3] = 8;        // buffer size
     mbox[4] = 0;        // status
     
@@ -21,7 +22,7 @@ u64 prop_get_serial(void) {
 
     mbox[7] = MBOX_END;
 
-    if (mbox_call(mbox, MBOX_CH_PROP0)) {
+    if (mbox_call(mbox, PROP0)) {
         return ((u64)mbox[6] << 32) + mbox[5];
     } 
 
@@ -37,7 +38,7 @@ bool prop_get_mac(u8 *buf) {
     mbox[0] = 8 * 4;    // mbox size
     mbox[1] = MBOX_REQUEST;
 
-    mbox[2] = MBOX_TAG_GET_MAC_ADDR;
+    mbox[2] = GET_MAC_ADDR;
     mbox[3] = 6;        // buffer size
     mbox[4] = 0;        // status
     
@@ -47,7 +48,7 @@ bool prop_get_mac(u8 *buf) {
 
     mbox[7] = MBOX_END;
 
-    if (!mbox_call(mbox, MBOX_CH_PROP0)) {
+    if (!mbox_call(mbox, PROP0)) {
         dbg_info("Could not get mac address\n");
         return false;
     }
@@ -65,7 +66,7 @@ u64 prop_get_arm_mem(void) {
     mbox[0] = 8 * 4;    // mbox size
     mbox[1] = MBOX_REQUEST;
 
-    mbox[2] = MBOX_TAG_GET_ARM_MEM;
+    mbox[2] = GET_ARM_MEM;
     mbox[3] = 8;        // buffer size
     mbox[4] = 0;        // status
     
@@ -75,11 +76,10 @@ u64 prop_get_arm_mem(void) {
 
     mbox[7] = MBOX_END;
 
-    if (mbox_call(mbox, MBOX_CH_PROP0)) {
+    if (mbox_call(mbox, PROP0)) {
         return (u64)mbox[6];
     }
 
     dbg_info("Could not get ARM memory\n");
     return 0;
 }
-

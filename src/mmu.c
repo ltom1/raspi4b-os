@@ -1,7 +1,7 @@
 #include <types.h>
-#include <layout.h>
+#include <hw/mmap.h>
+#include <vmem.h>
 #include <asm.h>
-#include <mmu.h>
 
 
 void mmu_mair_init(void) {

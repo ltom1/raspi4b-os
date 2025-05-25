@@ -1,6 +1,6 @@
 #include <types.h>
 #include <timer.h>
-#include <ic.h>
+#include <hw/ic.h>
 #include <asm.h>
 #include <gic.h>
 
@@ -38,14 +38,14 @@ void timer_init(u32 freq) {
 
 
     sleep_qs(1000000);
-
+/*
     *TIMER_CMP0 = *TIMER_CLK_LO + 1000000;
     *TIMER_CMP1 = *TIMER_CLK_LO + 1000000;
     *TIMER_CMP2 = *TIMER_CLK_LO + 1000000;
     *TIMER_CMP3 = *TIMER_CLK_LO + 1000000;
 
 
-/*
+
      // frequency = (clk / 256) * freq
     *SP804_REG_LOAD = 1;
 

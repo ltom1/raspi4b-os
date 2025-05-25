@@ -1,5 +1,5 @@
 #include <types.h>
-#include <gic.h>
+#include <hw/gic.h>
 
 
 void gic_int_enable(u64 n) {

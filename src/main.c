@@ -3,7 +3,6 @@
 #include <mbox.h>
 #include <prop.h>
 #include <vmem.h>
-#include <mmu.h>
 #include <asm.h>
 #include <timer.h>
 #include <pmem.h>

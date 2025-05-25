@@ -3,7 +3,6 @@
 #include <int.h>
 #include <dbg.h>
 #include <asm.h>
-#include <ic.h>
 
 
 const char *entry_labels[] = {

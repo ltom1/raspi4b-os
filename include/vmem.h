@@ -1,5 +1,4 @@
-#ifndef _VMEM_H
-#define _VMEM_H
+#pragma once
 
 #include <types.h>
 
@@ -48,4 +47,9 @@ void vmem_bootstrap(void);
 
 void vmem_map(u64 vaddr, u64 paddr);
 
-#endif 
+void mmu_enable(void);
+void mmu_disable(void);
+
+void mmu_change_pt(u64 ttbr0_paddr, u64 ttbr1_paddr);
+void mmu_mair_init(void);
+void mmu_tcr_init(void);

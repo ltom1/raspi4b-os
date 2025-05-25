@@ -1,5 +1,4 @@
-#ifndef _DBG_H
-#define _DBG_H
+#pragma once
 
 #include <types.h>
 
@@ -15,5 +14,3 @@ void dbg_puts(const char *str);
 void dbg_putu(u64 num);
 void dbg_putd(s64 num);
 void dbg_putx(u64 hex);
-
-#endif

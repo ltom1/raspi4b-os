@@ -1,6 +1,6 @@
 #include <types.h>
 #include <pmem.h>
-#include <layout.h>
+#include <hw/mmap.h>
 #include <vmem.h>
 #include <std.h>
 #include <dbg.h>
@@ -105,7 +105,6 @@ u64 pmem_find_free_region(u64 size) {
 
     return -1;
 }
-
 
 void pmem_free(u64 paddr, u64 n_blocks) {
 

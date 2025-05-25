@@ -1,8 +1,7 @@
-#ifndef _ASM_H
-#define _ASM_H
+#pragma once
 
 #include <types.h>
-#include <mmu.h>
+#include <hw/sysregs.h>
 
 
 #define ASM   __asm__ __volatile__
@@ -15,5 +14,3 @@ extern void asm_halt(void);
 extern void asm_test(void);
 extern void asm_irq_enable(void);
 extern void asm_irq_disable(void);
-
-#endif

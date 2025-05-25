@@ -1,8 +1,7 @@
-#ifndef _ARMC_H
-#define _ARMC_H
+#pragma once
 
 #include <types.h>
-#include <layout.h>
+#include <hw/mmap.h>
 
 
 #define IRQ0_PENDING0		((u32*)(IC_BASE + 0x200)) // ARM Core 0 IRQ Enabled Interrupt Pending bits [31:0]
@@ -91,5 +90,3 @@
 
 #define SWIRQ_SET		    ((u32*)(IC_BASE + 0x3f0)) // Write to Set Software Interrupt sources
 #define SWIRQ_CLEAR		    ((u32*)(IC_BASE + 0x3f4)) // Write to Clear Software Interrupt sources
-
-#endif

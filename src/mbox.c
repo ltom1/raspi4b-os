@@ -1,5 +1,5 @@
 #include <types.h>
-#include <mbox.h>
+#include <hw/mbox.h>
 #include <asm.h>
 
 
@@ -10,16 +10,16 @@ u8 mbox_call(u32 *mbox, u8 ch) {
     addr |= (ch & 0xf); // last 4 bits = channel
 
     // wait until mailbox is ready for writing
-    do { ASM("nop"); } while (*MBOX0_STATUS & MBOX_FULL);
+    do { ASM("nop"); } while (MBOX0->status & MBOX_FULL);
 
-    *MBOX1_WRITE = addr;
+    MBOX1->rw = addr;
 
     // wait for responses
     for (;;) {
-        do { ASM("nop"); } while (*MBOX0_STATUS & MBOX_EMPTY);
+        do { ASM("nop"); } while (MBOX0->status & MBOX_EMPTY);
 
         // check if it is the resonse to the correct mailbox
-        if (*MBOX0_READ == addr) {
+        if (MBOX0->rw == addr) {
             return mbox[1] == MBOX_SUCCESS;
         }
     }

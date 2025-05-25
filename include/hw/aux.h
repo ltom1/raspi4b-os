@@ -7,7 +7,7 @@
 #define AUX_ENABLE      ((u32*)(AUX_BASE + 0x04))
 
 
-typedef struct {
+typedef struct PACKED {
     u32 io;
     u32 ier;
     u32 iir;

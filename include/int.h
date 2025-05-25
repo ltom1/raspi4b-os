@@ -1,5 +1,4 @@
-#ifndef _INT_H
-#define _INT_H
+#pragma once
 
 
 // trap frame size
@@ -25,5 +24,3 @@
 #define VEC_IRQ_EL0_32  9
 #define VEC_FIQ_EL0_32  10
 #define VEC_ERR_EL0_32  11
-
-#endif
