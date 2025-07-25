@@ -1,0 +1,9 @@
+#pragma once
+
+#include <types.h>
+
+
+void mem_set(u8 *dest, u8 val, u64 n_bytes);
+void mem_cpy(u8 *dest, u8 *src, u64 n_bytes);
+
+u64 math_pow(u64 value, u64 n);

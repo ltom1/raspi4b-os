@@ -4,6 +4,8 @@
 
 
 #define DBG_UART1   true
+#define DBG_FB      true
+// #define DBG_EMMC   true
 
 
 void dbg_init(void);

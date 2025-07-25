@@ -3,7 +3,7 @@
 #include <asm.h>
 
 
-u8 mbox_call(u32 *mbox, u8 ch) {
+bool mbox_call(u32 *mbox, u8 ch) {
 
     u32 addr = (u32)(u64)mbox;
     addr &= ~0xf;       // clear last 4 bits

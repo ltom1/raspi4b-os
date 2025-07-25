@@ -16,3 +16,21 @@ void mem_cpy(u8 *dest, u8 *src, u64 n_bytes) {
         *(dest + i) = *(src + i);
     }
 }
+
+
+u64 math_pow(u64 value, u64 n) {
+
+    u64 res = 1;
+    for (u64 i = 0; i < n; i++) {
+        res = res * value;
+    }
+
+    return res;
+}
+
+u64 str_len(const char *str) {
+
+    u64 i = 0;
+    while (str[i]) i++;
+    return i;
+}

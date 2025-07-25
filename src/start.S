@@ -56,6 +56,7 @@ cpu_master:
     eret
 
 el1:
+    msr     spsel, #1
     mov     sp, x1
 
     // clear BSS section
@@ -76,7 +77,11 @@ break:
     bl      mmu_tcr_init
 
     ldr     x0, pt0_user
+    sub     x0, x0, x3
+
     ldr     x1, pt0_kernel
+    sub     x1, x1, x3
+
     bl      mmu_change_pt
 
     bl      mmu_enable

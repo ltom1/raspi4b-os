@@ -1,8 +1,13 @@
+#include <hw/gic.h>
+#include <proc.h>
 #include <types.h>
 #include <timer.h>
 #include <hw/ic.h>
+#include <hw/timer.h>
 #include <asm.h>
+#include <sched.h>
 #include <gic.h>
+#include <dbg.h>
 
 
 void sleep_cycles(u64 n_cycles) {
@@ -15,54 +20,52 @@ void sleep_qs(u64 qs) {
 
     register u64 freq, goal, count;
 
-    ASM("mrs %0, cntfrq_el0" : "=r"(freq) : : "memory");
+    freq = asm_get_timer_freq();
 
     // get current count
-    ASM("mrs %0, cntpct_el0" : "=r"(goal) : : "memory");
+    goal = asm_get_time();
 
     goal += ((freq / 1000) * qs) / 1000; 
 
-    do ASM("mrs %0, cntpct_el0" : "=r"(count) : : "memory");
+    do (count = asm_get_time());
     while (count < goal);
 }
 
 
-void timer_init(u32 freq) {
+u32 interval[4];
+u32 cur_val[4];
+
+void timer_init(u8 n, u32 delay_ms, u8 target) {
 
     gic_enable();
-    for (int i = 0; i < 120; i++) gic_int_enable(i);
-    *IRQ0_SET_EN_0 = 0xffffffff;
-    *IRQ0_SET_EN_1 = 0xffffffff;
-    *IRQ0_SET_EN_2 = 0xffffffff;
-    
+    gic_int_enable(IRQ_SYS_TIMER0 + n, target);
+
+    interval[n] = (delay_ms * CLOCKHZ) / 1000;
+
+    cur_val[n] = SYS_TIMER->lo;
+    cur_val[n] += interval[n];
+    SYS_TIMER->cmp[n] = cur_val[n];
+}
 
 
-    sleep_qs(1000000);
-/*
-    *TIMER_CMP0 = *TIMER_CLK_LO + 1000000;
-    *TIMER_CMP1 = *TIMER_CLK_LO + 1000000;
-    *TIMER_CMP2 = *TIMER_CLK_LO + 1000000;
-    *TIMER_CMP3 = *TIMER_CLK_LO + 1000000;
+void timer_handle_irq(u8 n) {
 
+    cur_val[n] += interval[n];
+    SYS_TIMER->cmp[n] = cur_val[n];
+    SYS_TIMER->cs = (1 << n);
 
+    dbg_info("TICK!\n");
 
-     // frequency = (clk / 256) * freq
-    *SP804_REG_LOAD = 1;
+    // schedule
+    cur_proc->counter--;
+    // current process has time slices left
+    if (cur_proc->counter > 0 || cur_proc->preempt_count > 0) return;
 
-    *SP804_REG_CTRL = 
-        SP804_ENABLE | 
-        SP804_INT_ENABLE | 
-        SP804_23_BIT |
-        SP804_PRESCALE_256;
+    cur_proc->counter = 0;
+    dbg_info("SCHEDULE\n");
 
-
-    // configure interrupt controller
-    *IRQ0_SET_EN_0 = 1; // TIMER_IRQ
-    *IRQ0_SET_EN_0 = 2; // TIMER_IRQ
-    *IRQ0_SET_EN_0 = 4; // TIMER_IRQ
-    *IRQ0_SET_EN_0 = 8; // TIMER_IRQ
-
-    *TIMER_CMP1 = *TIMER_CLK_LO + 1000000;
-    *TIMER_CS = 0;
-*/
+    // mark irq as completed
+    GICC->eoir = IRQ_SYS_TIMER0 + n;
+    *GICC_DIR = IRQ_SYS_TIMER0 + n;
+    schedule();
 }

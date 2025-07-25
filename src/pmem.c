@@ -15,6 +15,8 @@ u64 bitmap_bit_size;
 
 u64 next = 0;
 
+u8 *page_ref;
+
 
 void pmem_init(void) {
 
@@ -30,6 +32,15 @@ void pmem_init(void) {
 
     // from 0 - end of the bitmap = used
     pmem_bitmap_mark_blocks(0, bitmap_end_block + 1, true);
+
+    // VideoCore GPU memory
+    pmem_bitmap_mark_blocks(VC_START / PAGE_SIZE, VC_SIZE / PAGE_SIZE, true);
+
+    // memory mapped peripherals
+    pmem_bitmap_mark_blocks(PERI_START / PAGE_SIZE, PERI_SIZE / PAGE_SIZE, true);
+
+    // reference information for every page
+    page_ref = (u8*)P2V(pmem_alloc(RAM_SIZE / PAGE_SIZE));
 }
 
 
@@ -106,18 +117,23 @@ u64 pmem_find_free_region(u64 size) {
     return -1;
 }
 
-void pmem_free(u64 paddr, u64 n_blocks) {
+void pmem_free(u64 paddr, u64 n_bytes) {
+
+    u64 n_blocks = (n_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
 
     pmem_bitmap_mark_blocks(paddr / PAGE_SIZE, n_blocks, false);
 }
 
 
 // does return the physical address of the allocated block
-u64 pmem_alloc(u64 n_blocks) {
+u64 pmem_alloc(u64 n_bytes) {
+
+    u64 n_blocks = (n_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
 
     u64 block = pmem_find_free_region(n_blocks);
     if (block == (u64)-1) {
         dbg_info("Out of memory");
+        asm_irq_disable();
         asm_halt();
     }
 

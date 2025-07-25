@@ -42,7 +42,19 @@ typedef enum {
     GET_VC_MEM      = 0x00010006,
     GET_CLOCKS      = 0x00010007,
     GET_CMD_LINE    = 0x00050001,
-    GET_GET_DMA_CH  = 0x00060001
+    GET_GET_DMA_CH  = 0x00060001,
+
+    SET_FB_PHYS_RES = 0x00048003,
+    SET_FB_VIRT_RES = 0x00048004,
+
+    SET_FB_VIRT_OFF = 0x00048009,
+    SET_FB_DEPTH    = 0x00048005,
+    SET_FB_PXL_ORD  = 0x00048006,
+
+    GET_FB          = 0x00040001,
+    GET_FB_PITCH    = 0x00040008,
+    
+    GET_CLOCK_RATE  = 0x00030002
 } mbox_tag_id_t;
 
 
@@ -52,3 +64,20 @@ typedef enum {
 
 #define MBOX_REQUEST    0
 #define MBOX_END        0
+
+
+typedef struct PACKED { 
+    u32 id;
+    u32 buf_size;
+    u32 val_length;
+} mbox_tag_t;
+
+
+typedef struct PACKED ALIGNED(16) {
+    u32 size;
+    u32 status;
+    union {
+        mbox_tag_t tag;
+        u32 data[256]; 
+    };
+} mbox_msg_t;

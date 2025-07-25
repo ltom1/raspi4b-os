@@ -2,6 +2,8 @@
 #include <hw/mmap.h>
 #include <vmem.h>
 #include <asm.h>
+#include <proc.h>
+#include <dbg.h>
 
 
 void mmu_mair_init(void) {
@@ -36,6 +38,19 @@ void mmu_change_pt(u64 ttbr0_paddr, u64 ttbr1_paddr) {
 
     if (ttbr0_paddr) ASM("msr ttbr0_el1, %0" : : "r" (ttbr0_paddr));
     if (ttbr1_paddr) ASM("msr ttbr1_el1, %0" : : "r" (ttbr1_paddr));
+
+    ASM("dsb ishst; tlbi vmalle1is; dsb ish; isb");
+}
+
+
+void mmu_activate_address_space(void) {
+
+    u64 ttbr0_val = V2P(cur_proc->pt0) | ((u64)cur_proc->pid << TTBR_ASID_SHIFT);
+
+    ASM("msr ttbr0_el1, %0" : : "r" (ttbr0_val));
+
+    // this should not be necessary in theory because the tlb entries are tagged with the asid... or are they?
+    // ASM("dsb ishst; tlbi vmalle1is; dsb ish; isb");
 }
 
 
@@ -45,6 +60,8 @@ void mmu_enable(void) {
     ASM("dsb ish; isb; mrs %0, sctlr_el1" : "=r" (r));
 
     r |= 1; // M bit
+//    r |= (1 << 2); // D bit
+//    r |= (1 << 12); // C bit
 
     ASM("msr sctlr_el1, %0; isb" : : "r" (r));
 }

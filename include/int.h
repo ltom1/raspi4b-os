@@ -4,6 +4,12 @@
 // trap frame size
 #define S_FRAME_SIZE    256
 
+#define ESR_EC_SHIFT    26
+#define ESR_EC_SVC      0x15
+
+#define ESR_PAGE_FAULT  0x9200004f
+
+#define N_SYSCALLS      9
 
 #define VEC_SYNC_EL1T   0
 #define VEC_IRQ_EL1T    1

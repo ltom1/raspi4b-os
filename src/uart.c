@@ -5,6 +5,7 @@
 #include <hw/gpio.h>
 #include <hw/aux.h>
 #include <timer.h>
+#include <gpio.h>
 
 
 void uart1_init(void) {
@@ -24,12 +25,8 @@ void uart1_init(void) {
 
     // enable gpio pins 14 and 15
     // alternate function 5 (transmit/receive uart1)
-    register u32 r = GPIO->fsel[1];
-    // clear bits for gpio pins 14 and 15
-    r &= ~((7 << 12) | (7 << 15));
-    // set second bit for each pin -> alt fun 5
-    r |= (2 << 12) | (2 << 15);
-    GPIO->fsel[1] = r;
+    gpio_fsel(14, ALT_5);
+    gpio_fsel(15, ALT_5);
 
     // enable UART transmitter/receiver
     AUX_MU->ctrl = 3; 

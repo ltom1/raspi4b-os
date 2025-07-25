@@ -1,6 +1,7 @@
 #include <types.h>
 #include <dbg.h>
 #include <uart.h>
+#include <fb.h>
 
 #include <stdarg.h>
 
@@ -9,6 +10,9 @@ void dbg_init(void) {
 
 #ifdef DBG_UART1
     uart1_init();
+#endif
+#ifdef DBG_FB
+    fb_init(FB_RES_X, FB_RES_Y);
 #endif
 }
 
@@ -63,6 +67,9 @@ void dbg_putc(char c) {
 
 #ifdef DBG_UART1
     uart1_putc(c);
+#endif
+#ifdef DBG_FB
+    fb_putc(c);
 #endif
 }
 
