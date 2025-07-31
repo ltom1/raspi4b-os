@@ -14,10 +14,12 @@
 #define SP804_BASE      (MMIO_BASE + 0x0000b400)
 #define SYS_TIMER_BASE  (MMIO_BASE + 0x00003000)
 #define DMA_BASE        (MMIO_BASE + 0x00007000)
-#define EMMC_BASE       (MMIO_BASE + 0x00340000)
+#define EMMC_BASE       (MMIO_BASE + 0x00300000)
 #define CTRL_BASE       (KERNEL_BASE + 0xff800000)
 #define GICD_BASE       (KERNEL_BASE + 0xff841000)
 #define GICC_BASE       (KERNEL_BASE + 0xff842000)
+#define SPIN_CORE_BASE  (KERNEL_BASE + 0x000000d8)
+
 
 // 2gb
 // #define RAM_SIZE    0x7fffffff

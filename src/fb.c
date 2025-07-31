@@ -1,6 +1,7 @@
 #include <dma.h>
 #include <fb.h>
 #include <vmem.h>
+#include <sl.h>
 #include <asm.h>
 #include <dbg.h>
 #include <types.h>

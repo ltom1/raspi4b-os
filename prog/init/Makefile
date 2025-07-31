@@ -11,7 +11,7 @@ C_OBJ = $(patsubst $(SRC)%.c,$(BUILD)%.c.o,$(C_SRC))
 HEADERS = $(shell find $(INCLUDE) -type f -name '*.h')
 
 
-CFLAGS += -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles -I$(INCLUDE) -DDEBUG -ggdb3 
+CFLAGS += -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles -I$(INCLUDE) -DDEBUG -ggdb3
 
 PROG_NAME = $(shell basename $(shell pwd))
 

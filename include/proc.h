@@ -2,6 +2,7 @@
 
 #include <types.h>
 #include <int.h>
+#include <smp.h>
 #include <vmem.h>
 #include <fs/vfs.h>
 #include <alloc.h>
@@ -81,5 +82,5 @@ void proc_destroy(pcb_t *proc);
 extern void proc_start(void);
 extern void ctx_switch(pcb_t *old, pcb_t *new);
 
-extern pcb_t *cur_proc;
+extern pcb_t *cur_proc[N_CORES];
 extern pcb_t* procs[N_PROCS];

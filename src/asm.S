@@ -1,3 +1,10 @@
+.global asm_get_core
+asm_get_core:
+    mrs     x0, mpidr_el1
+    and     x0, x0, #3
+    ret
+
+
 .global asm_change_sp
 asm_change_sp:
     mov     sp, x0

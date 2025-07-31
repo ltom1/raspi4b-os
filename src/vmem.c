@@ -228,7 +228,7 @@ u64 *vmem_copy_address_space(u64 *old_pt0) {
                     new_pt3[i3] = old_pt3[i3];
                     page_ref[PAGE_NO(PTE(old_pt3[i3]))]++;
 
-                    asm_tlb_invld_asid(cur_proc->pid);
+                    asm_tlb_invld_asid(cur_proc[asm_get_core()]->pid);
                 }
             }
         }
@@ -241,7 +241,7 @@ u64 *vmem_copy_address_space(u64 *old_pt0) {
 // only called on permission fault (copy-on-write) when writing to a readonly page
 void vmem_handle_page_fault(u64 far) {
 
-    u64 *pt0 = cur_proc->pt0;
+    u64 *pt0 = cur_proc[asm_get_core()]->pt0;
     u64 *pt1 = (u64*)P2V(PTE(pt0[INDEX_L0(far)]));
     u64 *pt2 = (u64*)P2V(PTE(pt1[INDEX_L1(far)]));
     u64 *pt3 = (u64*)P2V(PTE(pt2[INDEX_L2(far)]));

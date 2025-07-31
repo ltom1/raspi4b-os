@@ -1,9 +1,13 @@
 #include <types.h>
 #include <dbg.h>
 #include <uart.h>
+#include <sl.h>
 #include <fb.h>
 
 #include <stdarg.h>
+
+
+sl_t dbg_lock = 0;
 
 
 void dbg_init(void) {
@@ -21,6 +25,8 @@ void dbg_info(const char *fmt, ...) {
 
     va_list vl;
     va_start(vl, fmt);
+
+    sl_acquire(&dbg_lock);
 
     char c;                 // go character by character
     for (u64 i = 0; (c = fmt[i]) != 0; i++) {
@@ -58,6 +64,7 @@ void dbg_info(const char *fmt, ...) {
                 break;
         }
     }
+    sl_release(&dbg_lock);
 
     va_end(vl);
 }

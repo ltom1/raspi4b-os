@@ -5,6 +5,7 @@
 #include <std.h>
 #include <dbg.h>
 #include <asm.h>
+#include <sl.h>
 
 
 extern u8 _pt_end;
@@ -16,6 +17,8 @@ u64 bitmap_bit_size;
 u64 next = 0;
 
 u8 *page_ref;
+
+sl_t pmem_lock = 0;
 
 
 void pmem_init(void) {
@@ -130,6 +133,8 @@ u64 pmem_alloc(u64 n_bytes) {
 
     u64 n_blocks = (n_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
 
+    sl_acquire(&pmem_lock);
+
     u64 block = pmem_find_free_region(n_blocks);
     if (block == (u64)-1) {
         dbg_info("Out of memory");
@@ -138,6 +143,9 @@ u64 pmem_alloc(u64 n_bytes) {
     }
 
     pmem_bitmap_mark_blocks(block, n_blocks, true);
+
+    sl_release(&pmem_lock);
+
     u64 paddr = block * PAGE_SIZE;
 
     // zero initialize

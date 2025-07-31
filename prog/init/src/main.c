@@ -26,6 +26,24 @@ void _start(void) {
     u8 pid = sys_get_pid();
     dbg_info("Hello from pid %u\n", pid);
 
+    u8 child = sys_fork();
+
+    if (child) {
+        while (1) {
+            dbg_info("Parent!\n");
+            sleep_qs(1000000);
+            sys_yield();
+        }
+    } else {
+        while (1) {
+            dbg_info("Child!\n");
+            sleep_qs(1000000);
+            sys_yield();
+        }
+    }
+
+    while(1);
+/*
     u8 child = sys_spawn("/PROG/SHELL.ELF");
 
     sys_print("HELLYEAH\n");
@@ -36,7 +54,7 @@ void _start(void) {
         sleep_qs(1000000);
         sys_yield();
     }
-
+*/
     /*
     sys_print("Hello world from init!\n");
     u8 pid = sys_get_pid();

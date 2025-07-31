@@ -8,6 +8,8 @@
 #include <asm.h>
 #include <sched.h>
 #include <vmem.h>
+#include <smp.h>
+#include <sl.h>
 #include <fs/vfs.h>
 
 
@@ -15,9 +17,11 @@ u8 cur_pid = 1;
 
 // initial kernel process
 pcb_t kernel_ctx;
-pcb_t *cur_proc = &kernel_ctx;
+pcb_t *cur_proc[N_CORES]= { &kernel_ctx, &kernel_ctx, &kernel_ctx, &kernel_ctx };
 
 pcb_t* procs[N_PROCS] = { &kernel_ctx };
+
+sl_t proc_lock = 0;
 
 
 pcb_t *proc_create(pcb_t *parent, const char *name, u8 length, file_t *f) {
@@ -68,8 +72,6 @@ pcb_t *proc_create(pcb_t *parent, const char *name, u8 length, file_t *f) {
 
 pcb_t *proc_fork(pcb_t *parent) {
 
-    schedule_off();
-
     pcb_t *proc = (pcb_t*)P2V(pmem_alloc(PAGE_SIZE));
     mem_cpy((u8*)proc, (u8*)parent, PAGE_SIZE);
     proc->kstack = (u64)((u64)proc + PAGE_SIZE);
@@ -93,21 +95,25 @@ pcb_t *proc_fork(pcb_t *parent) {
     proc->child = 0;
     proc->prev = 0;
 
+    sl_acquire(&proc_lock);
     proc->pid = cur_pid;
     procs[cur_pid++] = proc;
+    sl_release(&proc_lock);
 
-    schedule_on();
-
+    proc->state = RUNNABLE;
     return proc;
 }
 
 
 void proc_switch(pcb_t *new) {
 
-    if (new == cur_proc) return;
+    pcb_t *old = cur_proc[asm_get_core()];
 
-    pcb_t *old = cur_proc;
-    cur_proc = new;
+    new->state = RUNNING;
+
+    if (new == old) return;
+
+    cur_proc[asm_get_core()] = new;
 
     mmu_activate_address_space();
 

@@ -45,7 +45,7 @@ void mmu_change_pt(u64 ttbr0_paddr, u64 ttbr1_paddr) {
 
 void mmu_activate_address_space(void) {
 
-    u64 ttbr0_val = V2P(cur_proc->pt0) | ((u64)cur_proc->pid << TTBR_ASID_SHIFT);
+    u64 ttbr0_val = V2P(cur_proc[asm_get_core()]->pt0) | ((u64)cur_proc[asm_get_core()]->pid << TTBR_ASID_SHIFT);
 
     ASM("msr ttbr0_el1, %0" : : "r" (ttbr0_val));
 

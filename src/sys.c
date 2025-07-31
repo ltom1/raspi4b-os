@@ -19,36 +19,37 @@ void sys_invalid(void) {
 
 
 void sys_debug(u64 val) {
-    dbg_info("PID %u [%s]: %x\n", cur_proc->pid, cur_proc->name, val);
+
+    dbg_info("PID %u [%s]: %x\n", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, val);
 }
 
 
 void sys_exit(void) {
 
-    dbg_info("PID %u [%s]: Terminated\n", cur_proc->pid, cur_proc->name);
+    dbg_info("PID %u [%s]: Terminated\n", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name);
     
-    proc_destroy(cur_proc);
+    proc_destroy(cur_proc[asm_get_core()]);
 
     schedule();
 }
 
 
 u64 sys_get_pid(void) {
-    return cur_proc->pid;
+    return cur_proc[asm_get_core()]->pid;
 }
 
 
 u64 sys_alloc_heap(u64 n_bytes) {
 
     u64 paddr = pmem_alloc(n_bytes);
-    u64 vaddr = cur_proc->heap_vaddr;
+    u64 vaddr = cur_proc[asm_get_core()]->heap_vaddr;
 
-    vmem_map(cur_proc->pt0, cur_proc->heap_vaddr, paddr, n_bytes, PTE_USER | PTE_NG);
+    vmem_map(cur_proc[asm_get_core()]->pt0, cur_proc[asm_get_core()]->heap_vaddr, paddr, n_bytes, PTE_USER | PTE_NG);
 
     // todo: make a page hole in between blocks to avoid buffer overflow
-    cur_proc->heap_vaddr += (n_bytes + PAGE_SIZE - 1) & ~0xfff;
+    cur_proc[asm_get_core()]->heap_vaddr += (n_bytes + PAGE_SIZE - 1) & ~0xfff;
 
-    dbg_info("PID %u [%s]: ALLOC: %x - %x\n", cur_proc->pid, cur_proc->name, vaddr, cur_proc->heap_vaddr);
+    dbg_info("PID %u [%s]: ALLOC: %x - %x\n", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, vaddr, cur_proc[asm_get_core()]->heap_vaddr);
 
     return vaddr;
 }
@@ -57,11 +58,11 @@ u64 sys_alloc_heap(u64 n_bytes) {
 void sys_yield(void) {
 
     // schedule
-    cur_proc->counter--;
+    cur_proc[asm_get_core()]->counter--;
     // current process has time slices left
-    if (cur_proc->counter > 0 || cur_proc->preempt_count > 0) return;
+    if (cur_proc[asm_get_core()]->counter > 0 || cur_proc[asm_get_core()]->preempt_count > 0) return;
 
-    cur_proc->counter = 0;
+    cur_proc[asm_get_core()]->counter = 0;
 
     schedule();
 }
@@ -81,27 +82,27 @@ void sys_set_prio(u8 pid, u64 prio) {
 
 u64 sys_fork(void) {
 
-    proc_fork(cur_proc);
+    proc_fork(cur_proc[asm_get_core()]);
     return 0;
 }
 
 
 void sys_print(const char *str) {
 
-    dbg_info("PID %u [%s]: %s", cur_proc->pid, cur_proc->name, str);
+    dbg_info("PID %u [%s]: %s", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, str);
 }
 
 
 u64 sys_spawn(const char *path) {
 
-    dbg_info("PID %u [%s] spawns %s", cur_proc->pid, cur_proc->name, path);
+    dbg_info("PID %u [%s] spawns %s", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, path);
     file_t *f = fat32_load_file(fs, (alloc_t*)&heap, path);
 
     const char *basename = vfs_get_basename(path);
-    pcb_t *proc = proc_create(cur_proc, basename, str_len(basename), f);
+    pcb_t *proc = proc_create(cur_proc[asm_get_core()], basename, str_len(basename), f);
 
     if (!proc) {
-        dbg_info("PID %u [%s]: Failed to spawn %s", cur_proc->pid, cur_proc->name, path);
+        dbg_info("PID %u [%s]: Failed to spawn %s", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, path);
         asm_irq_disable();
         asm_halt();
     }

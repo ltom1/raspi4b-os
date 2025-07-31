@@ -57,11 +57,11 @@ umount:
 
 debug: kernel.img
 		sudo qemu-system-aarch64 \
-		-s -S -d unimp,int,cpu_reset,guest_errors,page -no-reboot -serial null -serial stdio \
+		-s -S -d unimp,int,cpu_reset,guest_errors,page -no-reboot \
 		-machine raspi4b -m 2G \
 		-kernel $(BUILD)$< \
 		-dtb raspi4b.dtb \
-		-sd drive.img &
+		-sd drive.img > output.txt &
 	$(TERM) --working-directory $(shell pwd) --command \
 	$(DBG) $(BUILD)/kernel.elf \
 		-ex "target remote localhost:1234" \

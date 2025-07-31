@@ -25,6 +25,7 @@
 #include <proc.h>
 #include <drive.h>
 #include <elf64.h>
+#include <smp.h>
 #include <sched.h>
 #include <hw/emmc.h>
 
@@ -70,7 +71,9 @@ void kmain(void) {
 
     init->prio = 1;
 
-    asm_irq_enable();
+    dbg_info("CORE %u\n", asm_get_core());
+    smp_init();
 
+    asm_irq_enable();
     while(1) schedule();
 }

@@ -85,7 +85,7 @@ void irq_handle_sync(u64 esr, u64 elr, u64 far) {
     asm_irq_disable();
 
     if ((esr & ESR_PAGE_FAULT) == ESR_PAGE_FAULT) {
-        dbg_info("PAGEFAULT at %x sp %x\n", far, cur_proc->tf->sp);
+        dbg_info("PAGEFAULT at %x sp %x\n", far, cur_proc[asm_get_core()]->tf->sp);
         vmem_handle_page_fault(far);
     } else {
         dbg_info(

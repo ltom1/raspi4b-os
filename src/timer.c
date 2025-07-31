@@ -57,11 +57,11 @@ void timer_handle_irq(u8 n) {
     dbg_info("TICK!\n");
 
     // schedule
-    cur_proc->counter--;
+    cur_proc[asm_get_core()]->counter--;
     // current process has time slices left
-    if (cur_proc->counter > 0 || cur_proc->preempt_count > 0) return;
+    if (cur_proc[asm_get_core()]->counter > 0 || cur_proc[asm_get_core()]->preempt_count > 0) return;
 
-    cur_proc->counter = 0;
+    cur_proc[asm_get_core()]->counter = 0;
     dbg_info("SCHEDULE\n");
 
     // mark irq as completed

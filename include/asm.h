@@ -7,6 +7,7 @@
 #define ASM   __asm__ __volatile__
 
 
+extern u8 asm_get_core(void);
 extern tcr_t asm_get_tcr(void);
 extern u64 asm_get_sctlr(void);
 
