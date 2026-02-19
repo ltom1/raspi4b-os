@@ -3,14 +3,13 @@
 #include <asm.h>
 #include <sched.h>
 #include <sl.h>
+#include <dbg.h>
 
 
 sl_t sched_lock = 0;
 
 
 void schedule(void) {
-
-    cur_proc[asm_get_core()]->state = RUNNABLE;
 
     schedule_off();
 
@@ -42,10 +41,12 @@ void schedule(void) {
     schedule_on();
 }
 
+
 void schedule_on(void) {
     cur_proc[asm_get_core()]->preempt_count--;
     sl_release(&sched_lock);
 }
+
 
 void schedule_off(void) {
     sl_acquire(&sched_lock);

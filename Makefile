@@ -7,6 +7,8 @@ INCLUDE = include/
 BUILD = build/
 LINKER_SCRIPT = kernel.ld
 
+PYTHON = python3
+
 ASM_SRC = $(shell find $(SRC) -type f -name '*.S')
 ASM_OBJ = $(patsubst $(SRC)%.S,$(BUILD)%.S.o,$(ASM_SRC))
 
@@ -15,7 +17,7 @@ C_OBJ = $(patsubst $(SRC)%.c,$(BUILD)%.c.o,$(C_SRC))
 
 HEADERS = $(shell find $(INCLUDE) -type f -name '*.h')
 
-CFLAGS += -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles -I$(INCLUDE) -DDEBUG -ggdb3 
+CFLAGS += -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles -I$(INCLUDE) -DDEBUG -ggdb3
 
 PROGRAMS = $(shell find $(PROG) -mindepth 1 -maxdepth 1 -type d)
 
@@ -89,13 +91,16 @@ kernel.elf: $(ASM_OBJ) $(C_OBJ) $(HEADERS) $(LINKER_SCRIPT)
 	$(LD) -nostdlib -T $(LINKER_SCRIPT) $(ASM_OBJ) $(C_OBJ) -o $(BUILD)$@
 
 
-$(BUILD)%.S.o: $(SRC)%.S
+$(BUILD)%.S.o: $(SRC)%.S func-gen.py
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)%.c.o: $(SRC)%.c
+$(BUILD)%.c.o: $(SRC)%.c func-gen.py
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+func-gen.py:
+	$(PYTHON) $@
 
 clean:
 	rm -rf -- $(BUILD)

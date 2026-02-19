@@ -16,16 +16,13 @@ u64 *spin_core = (u64*)SPIN_CORE_BASE;
 void smp_init(void) {
 
     kstacks[0] = (u64)_start;
-    /*
-    for (u64 i = 1; i < N_CORES; i++) {
-        kstacks[i] = pmem_alloc(STACK_SIZE);
+
+    for (u64 i = 1; i < 3; i++) {
+        kstacks[i] = pmem_alloc(STACK_SIZE) + STACK_SIZE;
         spin_core[i] = V2P(smp_core_stub);
     }
-    */
 
-    kstacks[1] = pmem_alloc(STACK_SIZE) + STACK_SIZE;
-    spin_core[1] = V2P(smp_core_stub);
-    ASM("sev");
+    ASM("dsb sy; sev");
 }
 
 

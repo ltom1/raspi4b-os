@@ -121,7 +121,10 @@ void proc_switch(pcb_t *new) {
     asm_cache_clean();
     asm_barrier();
 
-    ctx_switch(old, new);
+    new->ctx.lr = (u64)proc_start;
+    new->ctx.sp = (u64)new->tf;
+
+    ctx_restore(new);
 }
 
 

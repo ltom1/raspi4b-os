@@ -33,12 +33,14 @@ void _start(void) {
             dbg_info("Parent!\n");
             sleep_qs(1000000);
             sys_yield();
+            sys_fork();
         }
     } else {
         while (1) {
             dbg_info("Child!\n");
             sleep_qs(1000000);
             sys_yield();
+            sys_spawn("/PROG/SHELL.ELF");
         }
     }
 

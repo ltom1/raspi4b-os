@@ -39,6 +39,7 @@ mbr_t mbr;
 void kmain(void) {
     dbg_init();
     dbg_info("Hello world!\n");
+    dbg_info("%s in file %s at line %u\n", __FUNCTION__, __FILE__, __LINE__);
     dbg_info("fb: %x\n\n", fb);
 
     pmem_init();

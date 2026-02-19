@@ -81,6 +81,9 @@ void proc_destroy(pcb_t *proc);
 
 extern void proc_start(void);
 extern void ctx_switch(pcb_t *old, pcb_t *new);
+extern void ctx_save(pcb_t *old);
+extern void ctx_restore(pcb_t *new);
 
 extern pcb_t *cur_proc[N_CORES];
 extern pcb_t* procs[N_PROCS];
+extern pcb_t kernel_ctx;

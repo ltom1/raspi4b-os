@@ -34,6 +34,7 @@
 
         packages = [ 
           pkgs.qemu
+          pkgs.python3
           pkgs.gdb
           aarch64-elf-toolchain
         ];

@@ -1,8 +1,12 @@
+#include "func.h"
 #include <types.h>
 #include <dbg.h>
 #include <uart.h>
 #include <sl.h>
 #include <fb.h>
+#include <asm.h>
+#include <proc.h>
+#include <log.h>
 
 #include <stdarg.h>
 
@@ -26,7 +30,9 @@ void dbg_info(const char *fmt, ...) {
     va_list vl;
     va_start(vl, fmt);
 
+    LOG(FUNC_DBG_INFO);
     sl_acquire(&dbg_lock);
+    LOG(FUNC_DBG_INFO);
 
     char c;                 // go character by character
     for (u64 i = 0; (c = fmt[i]) != 0; i++) {
@@ -64,6 +70,8 @@ void dbg_info(const char *fmt, ...) {
                 break;
         }
     }
+
+    LOG(FUNC_DBG_INFO);
     sl_release(&dbg_lock);
 
     va_end(vl);

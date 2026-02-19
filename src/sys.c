@@ -57,12 +57,24 @@ u64 sys_alloc_heap(u64 n_bytes) {
 
 void sys_yield(void) {
 
+    dbg_info("CORE %u: yield PID %u\n", asm_get_core(), cur_proc[asm_get_core()]->pid);
+
     // schedule
     cur_proc[asm_get_core()]->counter--;
     // current process has time slices left
-    if (cur_proc[asm_get_core()]->counter > 0 || cur_proc[asm_get_core()]->preempt_count > 0) return;
+    if (cur_proc[asm_get_core()]->counter > 0 || cur_proc[asm_get_core()]->preempt_count > 0) {
+
+        dbg_info("CORE %u resumes PID %u\n", asm_get_core(), cur_proc[asm_get_core()]->pid);
+        return;
+    }
 
     cur_proc[asm_get_core()]->counter = 0;
+    pcb_t *old = cur_proc[asm_get_core()];
+    dbg_info("CORE %u gives up PID %u\n", asm_get_core(), cur_proc[asm_get_core()]->pid);
+    ctx_save(old);
+    cur_proc[asm_get_core()] = &kernel_ctx;
+    old->state = RUNNABLE;
+
 
     schedule();
 }
@@ -89,7 +101,7 @@ u64 sys_fork(void) {
 
 void sys_print(const char *str) {
 
-    dbg_info("PID %u [%s]: %s", cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, str);
+    dbg_info("CORE %u: PID %u [%s]: %s", asm_get_core(), cur_proc[asm_get_core()]->pid, cur_proc[asm_get_core()]->name, str);
 }
 
 

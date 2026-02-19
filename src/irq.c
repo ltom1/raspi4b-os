@@ -1,6 +1,7 @@
 #include <types.h>
 #include <irq.h>
 #include <int.h>
+#include <log.h>
 #include <dbg.h>
 #include <timer.h>
 #include <proc.h>
@@ -34,17 +35,22 @@ const char *entry_labels[] = {
 
 
 void irq_handle_invalid(u64 vec, u64 esr, u64 elr, u64 far) {
+
+//    log_print();
+    asm_irq_disable();
+    while(1);
     dbg_info(
-        "%s\nESR: %x\nELR: %x\nFAR: %x\nSP: %x\n", 
-        entry_labels[vec], esr, elr, far, asm_get_sp()
+        "\n%s on CORE %u\nESR: %x\nELR: %x\nFAR: %x\nSP: %x\n\n", 
+        entry_labels[vec], asm_get_core(), esr, elr, far, asm_get_sp()
     );
 
+/*
     u64 x = 0;
     for (int i = 0; i < 32; i+=2) {
         x = GICD->int_set_pend[i] + ((u64)GICD->int_set_pend[i+1] << 32);
         dbg_info("%x\n", x);
     }
-
+    */
     asm_irq_disable();
     asm_halt();
 }
@@ -88,11 +94,7 @@ void irq_handle_sync(u64 esr, u64 elr, u64 far) {
         dbg_info("PAGEFAULT at %x sp %x\n", far, cur_proc[asm_get_core()]->tf->sp);
         vmem_handle_page_fault(far);
     } else {
-        dbg_info(
-            "Unknown: ESR: %x\nELR: %x\nFAR: %x\n", 
-            esr, elr, far
-        );
-        asm_halt();
+        irq_handle_invalid(VEC_SYNC_EL0_64, esr, elr, far);
     }
 
     asm_irq_enable();
